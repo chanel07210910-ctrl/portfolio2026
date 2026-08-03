@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI 快捷鍵查詢小助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .shortcut-card:hover { transform: translateY(-2px); transition: all 0.2s; }
+        .category-btn.active { background-color: #f3da35; color: #333; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- 標題欄 -->
+    <header class="bg-[#f3da35] p-6 text-center shadow-md">
+        <h1 class="text-3xl font-bold text-gray-800">Power BI 快捷鍵查詢小助手</h1>
+        <p class="text-gray-700 mt-2">快速搜尋 Power BI Desktop 常用指令</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4">
+        
+        <!-- 搜尋框 -->
+        <div class="mb-6">
+            <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋... (例如: DAX, 篩選, 複製)" 
+                class="w-full p-4 rounded-lg border-2 border-gray-300 focus:border-[#f3da35] focus:outline-none shadow-sm text-lg">
+        </div>
+
+        <!-- 分類按鈕 -->
+        <div class="flex flex-wrap gap-2 mb-6" id="categoryFilters">
+            <button class="category-btn active px-4 py-2 bg-white rounded-full shadow text-sm" onclick="filterCategory('全部')">全部</button>
+            <button class="category-btn px-4 py-2 bg-white rounded-full shadow text-sm" onclick="filterCategory('常用')">常用</button>
+            <button class="category-btn px-4 py-2 bg-white rounded-full shadow text-sm" onclick="filterCategory('報表設計')">報表設計</button>
+            <button class="category-btn px-4 py-2 bg-white rounded-full shadow text-sm" onclick="filterCategory('DAX編輯器')">DAX 編輯器</button>
+            <button class="category-btn px-4 py-2 bg-white rounded-full shadow text-sm" onclick="filterCategory('導覽')">介面導覽</button>
+        </div>
+
+        <!-- 快捷鍵列表 -->
+        <div id="shortcutList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 內容由 JS 動態生成 -->
+        </div>
+
+    </main>
+
+    <script>
+        const shortcuts = [
+            { cmd: "Shift + ?", desc: "顯示快捷鍵說明視窗", cat: "常用" },
+            { cmd: "Alt + Shift + F11", desc: "顯示視覺效果的資料表格", cat: "常用" },
+            { cmd: "Ctrl + S", desc: "儲存報表", cat: "常用" },
+            { cmd: "F2", desc: "重新命名選取的欄位/度量值/表格", cat: "常用" },
+            { cmd: "Ctrl + Enter", desc: "提交/儲存 DAX 公式", cat: "DAX編輯器" },
+            { cmd: "Alt + Up / Down", desc: "向上/下移動整行公式", cat: "DAX編輯器" },
+            { cmd: "Shift + Alt + Down", desc: "向下複製整行公式", cat: "DAX編輯器" },
+            { cmd: "Ctrl + /", desc: "快速註解/取消註解 (//)", cat: "DAX編輯器" },
+            { cmd: "Ctrl + Space", desc: "強制喚出自動完成提示", cat: "DAX編輯器" },
+            { cmd: "Ctrl + G", desc: "群組化選取的視覺效果", cat: "報表設計" },
+            { cmd: "Ctrl + Shift + G", desc: "解除群組化", cat: "報表設計" },
+            { cmd: "方向鍵", desc: "微調視覺效果位置 (1像素)", cat: "報表設計" },
+            { cmd: "Shift + 方向鍵", desc: "大幅移動視覺效果 (10像素)", cat: "報表設計" },
+            { cmd: "Ctrl + F6", desc: "在功能區、窗格與畫布間切換焦點", cat: "導覽" },
+            { cmd: "Ctrl + Page Down", desc: "切換到下一個報表頁面", cat: "導覽" },
+            { cmd: "Ctrl + Page Up", desc: "切換到上一個報表頁面", cat: "導覽" },
+            { cmd: "Alt", desc: "開啟功能區的快捷鍵標籤", cat: "導覽" },
+            { cmd: "Alt + Shift + F10", desc: "開啟選取物件的選單 (更多選項)", cat: "報表設計" },
+            { cmd: "Esc", desc: "結束選取或關閉對話方塊", cat: "常用" }
+        ];
+
+        let currentCategory = '全部';
+
+        function displayShortcuts(filterText = '') {
+            const listElement = document.getElementById('shortcutList');
+            listElement.innerHTML = '';
+
+            const filtered = shortcuts.filter(item => {
+                const matchesSearch = item.cmd.toLowerCase().includes(filterText.toLowerCase()) || 
+                                    item.desc.toLowerCase().includes(filterText.toLowerCase());
+                const matchesCategory = currentCategory === '全部' || item.cat === currentCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "shortcut-card bg-white p-4 rounded-lg shadow border-l-4 border-[#f3da35] flex flex-col justify-between";
+                card.innerHTML = `
+                    <div class="text-sm text-gray-500 mb-1">${item.cat}</div>
+                    <div class="font-bold text-gray-800 text-lg mb-2">${item.cmd}</div>
+                    <div class="text-gray-600">${item.desc}</div>
+                `;
+                listElement.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText === cat) btn.classList.add('active');
+            });
+            displayShortcuts(document.getElementById('searchInput').value);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            displayShortcuts(e.target.value);
+        });
+
+        // 初始渲染
+        displayShortcuts();
+    </script>
+</body>
+</html>
