@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趙憶慧 | 個人履歷 Resume</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navyDark: '#2C303E',    /* 左側深色底色 */
+                        coralMain: '#E88D7D',   /* 經典粉珊瑚主色 */
+                        coralLight: '#F7C5BC',  /* 淡珊瑚粉 */
+                        bgOffWhite: '#F5F4F0',  /* 右側米白底色 */
+                        textDark: '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'Montserrat', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #1A1C23;
+            font-family: 'Noto Sans TC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .section-banner {
+            background-color: #E88D7D;
+            color: #FFFFFF;
+            font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+        .dot-filled {
+            background-color: #E88D7D;
+        }
+        .dot-empty {
+            background-color: #2C303E;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-0 sm:py-8 md:py-12 px-0 sm:px-4 flex justify-center items-center">
+
+    <!-- Main Resume Container -->
+    <main class="w-full max-w-5xl bg-white shadow-2xl rounded-none sm:rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[1100px]">
+
+        <!-- ================= LEFT COLUMN / SIDEBAR (35%) ================= -->
+        <aside class="md:col-span-4 lg:col-span-4 bg-navyDark text-white p-6 sm:p-8 flex flex-col justify-between space-y-8">
+            <div class="space-y-8">
+                <!-- Avatar Graphic -->
+                <div class="flex justify-center md:justify-start pt-2">
+                    <div class="w-36 h-36 bg-white rounded-lg p-1.5 border-4 border-coralMain/40 flex items-center justify-center shadow-md overflow-hidden">
+                        <img src="https://chanel07210910-ctrl.github.io/portfolio2026/abc.png" 
+                             alt="趙憶慧照片" 
+                             class="w-full h-full object-cover rounded"
+                             onerror="this.onerror=null; this.src='https://placehold.co/300x300/E88D7D/FFFFFF?text=%E8%B6%99%E6%86%B6%E6%85%A7';">
+                    </div>
+                </div>
+
+                <!-- Name & Title -->
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black tracking-wider text-coralMain font-montserrat uppercase leading-tight">
+                        趙憶慧
+                    </h1>
+                    <p class="text-xs tracking-widest text-gray-300 font-montserrat uppercase mt-2 font-semibold">
+                        ZHAO YI HUI • 行政助理
+                    </p>
+                </div>
+
+                <!-- Profile Section -->
+                <div class="space-y-3">
+                    <h2 class="text-lg font-extrabold text-coralMain tracking-widest font-montserrat uppercase border-b border-gray-700 pb-1">
+                        PROFILE
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">
+                        具備逾 12 年多元工作經歷，包含 8 年公家機關圖書館資深服務背景。精準操作自動化系統、高流量資料編目與活動後勤支援。以細心校對與會計背景，穩定提供優質行政後勤服務。
+                    </p>
+                </div>
+
+                <!-- Contact Info Section -->
+                <div class="space-y-3">
+                    <h2 class="text-lg font-extrabold text-coralMain tracking-widest font-montserrat uppercase border-b border-gray-700 pb-1">
+                        CONTACT INFO.
+                    </h2>
+                    <ul class="text-xs sm:text-sm space-y-2.5 text-gray-300 font-light">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-phone text-coralMain mt-0.5 w-4"></i>
+                            <div>
+                                <span class="text-gray-400 block text-[10px] uppercase font-montserrat">Phone</span>
+                                <a href="tel:0936620721" class="hover:text-coralMain transition-colors font-medium">0936-620-721</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-envelope text-coralMain mt-0.5 w-4"></i>
+                            <div class="overflow-hidden">
+                                <span class="text-gray-400 block text-[10px] uppercase font-montserrat">Email</span>
+                                <a href="mailto:chanel07210910@gmail.com" class="hover:text-coralMain transition-colors font-medium truncate block">chanel07210910@gmail.com</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-location-dot text-coralMain mt-0.5 w-4"></i>
+                            <div>
+                                <span class="text-gray-400 block text-[10px] uppercase font-montserrat">Address</span>
+                                <span class="font-medium">桃園市桃園區</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-clock text-coralMain mt-0.5 w-4"></i>
+                            <div>
+                                <span class="text-gray-400 block text-[10px] uppercase font-montserrat">Available Hours</span>
+                                <span class="font-medium">電話聯絡 09:00 - 21:00</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Credentials & Licenses -->
+                <div class="space-y-3">
+                    <h2 class="text-lg font-extrabold text-coralMain tracking-widest font-montserrat uppercase border-b border-gray-700 pb-1">
+                        LICENSES
+                    </h2>
+                    <div class="text-xs text-gray-300 space-y-1.5 font-light">
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-id-card text-coralMain text-xs"></i> 保母專業證照</p>
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-id-card text-coralMain text-xs"></i> 輕型 / 普通重型機車駕照</p>
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-id-card text-coralMain text-xs"></i> 普通小型車駕照</p>
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <div class="space-y-3">
+                    <h2 class="text-lg font-extrabold text-coralMain tracking-widest font-montserrat uppercase border-b border-gray-700 pb-1">
+                        EDUCATION
+                    </h2>
+                    <div class="text-xs text-gray-300">
+                        <p class="font-bold text-white text-sm">私立育達商業技術學院</p>
+                        <p class="text-gray-400">會計科 | 高中畢業 (1997 - 2000)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Attribution -->
+            <div class="pt-6 border-t border-gray-800 text-[10px] text-gray-500 text-center">
+                <p>© 2026 趙憶慧 Zhao Yi Hui.</p>
+                <a href="https://zh.pngtree.com/freepng/resume-blue-corporate-personnel-traditional-chinese_15310665.html" target="_blank" rel="noopener noreferrer" class="hover:underline opacity-60">png 圖片來源於 zh.pngtree.com/</a>
+            </div>
+        </aside>
+
+        <!-- ================= RIGHT COLUMN / MAIN CONTENT (65%) ================= -->
+        <section class="md:col-span-8 lg:col-span-8 bg-bgOffWhite p-6 sm:p-10 flex flex-col space-y-8">
+
+            <!-- SECTION 1: WHAT I DO BEST -->
+            <div class="space-y-4">
+                <div class="section-banner px-4 py-2.5 text-center text-sm sm:text-base uppercase rounded-sm shadow-sm">
+                    WHAT I DO BEST
+                </div>
+
+                <!-- Icon Grid (Matching Image Style) -->
+                <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm space-y-4">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-keyboard"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">資料輸入建檔</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">行政檔案管理</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">活動支援引導</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-laptop-code"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">自動化系統操作</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">款項核對結算</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-coralLight/40 flex items-center justify-center text-coralMain text-xl mb-1.5">
+                                <i class="fa-solid fa-magnifying-glass font-black"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-navyDark">精準核對校對</span>
+                        </div>
+                    </div>
+
+                    <!-- Capability Bullet Points -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 pt-3 border-t border-gray-100 text-xs text-gray-700 font-medium">
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-coralMain"></span>
+                            <span>高流量圖書自動化系統編目</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-coralMain"></span>
+                            <span>親子閱讀推廣專案現場執行</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-coralMain"></span>
+                            <span>會計背景精準數據核對</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-coralMain"></span>
+                            <span>門市收銀與每日帳款結算</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: WORK EXPERIENCE -->
+            <div class="space-y-4">
+                <div class="section-banner px-4 py-2.5 text-center text-sm sm:text-base uppercase rounded-sm shadow-sm">
+                    WORK EXPERIENCE
+                </div>
+
+                <div class="bg-white p-5 sm:p-6 rounded-lg border border-gray-200 shadow-sm space-y-6">
+                    
+                    <!-- Item 1: 圖書館員 (資深 8年) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 border-b border-gray-100 pb-5">
+                        <div class="sm:col-span-3 text-xs font-bold text-coralMain font-montserrat">
+                            2008 - 2016
+                        </div>
+                        <div class="sm:col-span-9 space-y-1">
+                            <h3 class="text-sm font-bold text-navyDark">
+                                蘆竹圖書館 <span class="text-coralMain">●</span> 圖書館員 (公家機關)
+                            </h3>
+                            <ul class="text-xs text-gray-600 space-y-1 pl-3 list-disc marker:text-coralMain">
+                                <li>操作自動化圖書系統，每週穩定執行約 100 冊新書編目、索引核對與分類建檔。</li>
+                                <li>負責每週兩場（年化 90+ 場）兒童說故事推廣活動現場佈置、民眾簽到與秩序維護。</li>
+                                <li>負責高流量圖書上架、歸書與實體館藏維護，確保資料庫與現場實體精準對應。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: 蝦皮店到店 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 border-b border-gray-100 pb-5">
+                        <div class="sm:col-span-3 text-xs font-bold text-coralMain font-montserrat">
+                            2024 - 2025
+                        </div>
+                        <div class="sm:col-span-9 space-y-1">
+                            <h3 class="text-sm font-bold text-navyDark">
+                                蝦皮店到店 <span class="text-coralMain">●</span> 售票 / 收銀人員
+                            </h3>
+                            <ul class="text-xs text-gray-600 space-y-1 pl-3 list-disc marker:text-coralMain">
+                                <li>執行每日包裹收發、包裹刷條碼入庫與顧客快速取貨流程。</li>
+                                <li>負責每日收銀款項結算、基本財務報表紀錄與門市秩序維護。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: 台固保全 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 border-b border-gray-100 pb-5">
+                        <div class="sm:col-span-3 text-xs font-bold text-coralMain font-montserrat">
+                            2026
+                        </div>
+                        <div class="sm:col-span-9 space-y-1">
+                            <h3 class="text-sm font-bold text-navyDark">
+                                台固保全股份有限公司 <span class="text-coralMain">●</span> 行政助理
+                            </h3>
+                            <ul class="text-xs text-gray-600 space-y-1 pl-3 list-disc marker:text-coralMain">
+                                <li>協助基礎行政庶務處理、表單登錄與文檔管理作業。</li>
+                                <li>維護現場民眾服務應對與後勤支援任務。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Item 4: 早期歷練 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4">
+                        <div class="sm:col-span-3 text-xs font-bold text-coralMain font-montserrat">
+                            2002 - 2006
+                        </div>
+                        <div class="sm:col-span-9 space-y-1">
+                            <h3 class="text-sm font-bold text-navyDark">
+                                東泰沂 / 紡紗業 <span class="text-coralMain">●</span> 作業員 & 財務會計助理
+                            </h3>
+                            <p class="text-xs text-gray-600">
+                                負責基礎會計帳務核對、出納表單記錄，以及生產線精細包裝與作業控管。
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECTION 3: SKILLS (Dot Rating Matching Image Style) -->
+            <div class="space-y-4">
+                <div class="section-banner px-4 py-2.5 text-center text-sm sm:text-base uppercase rounded-sm shadow-sm">
+                    SKILLS
+                </div>
+
+                <div class="bg-white p-5 sm:p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                        
+                        <!-- Skill 1 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">自動化資料建檔 & 校對</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                            </div>
+                        </div>
+
+                        <!-- Skill 2 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">圖書編目與分類系統</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                            </div>
+                        </div>
+
+                        <!-- Skill 3 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">行政檔案與資產管理</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-empty"></span>
+                            </div>
+                        </div>
+
+                        <!-- Skill 4 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">專案現場執行與接待</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-empty"></span>
+                            </div>
+                        </div>
+
+                        <!-- Skill 5 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">會計帳務與收銀核對</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-empty"></span>
+                            </div>
+                        </div>
+
+                        <!-- Skill 6 -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-navyDark">通訊與民眾服務協調</span>
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                                <span class="w-3 h-3 rounded-full dot-filled"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
