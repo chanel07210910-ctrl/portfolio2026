@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power 快捷鍵查詢小助手 | PowerPoint 高效速查與測驗工具</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pptBrand: '#D24726',       /* PowerPoint 經典品牌橘紅 */
+                        pptHover: '#B83B1D',
+                        pptBg: '#F9F8F6',          /* 質感米白底色 */
+                        pptNavy: '#2C303E',
+                        pptAccent: '#FFF1ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F9F8F6;
+            color: #2C303E;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        /* 擬真鍵盤按鍵樣式 <kbd> */
+        .kbd-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.8rem;
+            height: 1.8rem;
+            padding: 0 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #1E293B;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+            border: 1px solid #CBD5E1;
+            border-bottom: 3px solid #94A3B8;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .kbd-key:hover {
+            transform: translateY(-1px);
+        }
+
+        /* 自訂滾動條 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* 卡片懸浮卡感 */
+        .shortcut-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .shortcut-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(210, 71, 38, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Modal 動畫 */
+        .modal-animate {
+            animation: modalFadeIn 0.2s ease-out forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- 1. 頂部導覽列 Header -->
+    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-30 shadow-sm backdrop-blur-md bg-white/90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- 品牌 Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-pptBrand text-white flex items-center justify-center font-black text-xl shadow-md shadow-pptBrand/20">
+                    P
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-pptNavy flex items-center gap-2">
+                        Power 快捷鍵查詢小助手
+                        <span class="text-[10px] bg-pptAccent text-pptBrand font-bold px-2 py-0.5 rounded-full border border-pptBrand/20 hidden sm:inline-block">PPT / Office 專用</span>
+                    </h1>
+                    <p class="text-xs text-gray-500 hidden sm:block">簡報製作與播放必備的高效鍵盤速查指南</p>
+                </div>
+            </div>
+
+            <!-- 右側功能切換區 (OS 切換 + 測驗模式 + 我的最愛) -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- OS 系統切換 Toggle -->
+                <div class="bg-gray-100 p-1 rounded-xl border border-gray-200 flex items-center gap-1 text-xs font-medium">
+                    <button id="btnOSWin" onclick="setOS('win')" class="px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 bg-white text-pptNavy shadow-sm font-bold">
+                        <i class="fa-brands fa-windows text-blue-600"></i>
+                        <span>Win</span>
+                    </button>
+                    <button id="btnOSMac" onclick="setOS('mac')" class="px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 text-gray-500 hover:text-pptNavy">
+                        <i class="fa-brands fa-apple text-gray-700"></i>
+                        <span>Mac</span>
+                    </button>
+                </div>
+
+                <!-- 記憶大考驗測驗 Modal 開啟按鈕 -->
+                <button onclick="openQuizModal()" class="bg-pptBrand hover:bg-pptHover text-white text-xs sm:text-sm font-medium py-2 px-3 sm:px-4 rounded-xl shadow-md transition-all flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span class="hidden sm:inline">快捷鍵</span>大考驗
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. 主內容區域 Main Section -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- 搜尋與統計 Banner -->
+        <div class="bg-gradient-to-br from-pptNavy to-slate-800 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <!-- 背景裝飾微光 -->
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-pptBrand/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="space-y-1">
+                    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        快捷鍵關鍵字即時搜尋
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-300">輸入功能（例如：播放、字體、群組、貼上）或按鍵（例如：F5、Ctrl、B）</p>
+                </div>
+
+                <!-- 搜尋輸入框 -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="搜尋快捷鍵功能或按鍵組合..." class="w-full pl-11 pr-10 py-3.5 bg-white/10 backdrop-blur-md text-white placeholder-gray-400 border border-white/20 rounded-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-pptBrand focus:bg-white/20 transition-all">
+                    <button id="btnClearSearch" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white w-7 h-7 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- 熱門搜尋快速標籤 -->
+                <div class="flex flex-wrap items-center gap-2 text-xs text-gray-300 pt-1">
+                    <span class="text-gray-400">熱門搜尋：</span>
+                    <button onclick="quickSearch('播放')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors">簡報播放</button>
+                    <button onclick="quickSearch('複製格式')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors">複製格式</button>
+                    <button onclick="quickSearch('群組')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors">群組解散</button>
+                    <button onclick="quickSearch('黑屏')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors">播放黑屏 (B)</button>
+                    <button onclick="quickSearch('字體')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors">字體放大</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 分類 Filter 頁籤區 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-3">
+            <!-- 分類膠囊標籤 -->
+            <div id="categoryTabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0 scrollbar-none text-xs sm:text-sm font-medium">
+                <!-- 由 JS 動態生成分類按鈕 -->
+            </div>
+
+            <!-- 我的最愛 Filter 與 統計數據 -->
+            <div class="flex items-center justify-between sm:justify-end gap-3 text-xs text-gray-500 shrink-0">
+                <button id="btnFavOnly" onclick="toggleFavOnly()" class="px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 bg-white transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <span>只看收藏</span>
+                    <span id="favCountBadge" class="bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded-full text-[10px]">0</span>
+                </button>
+                <div class="text-gray-400">
+                    共 <span id="totalCount" class="font-bold text-pptNavy">0</span> 筆結果
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 快捷鍵卡片列表區 Grid -->
+        <div id="shortcutsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- 由 JS 動態繪製快捷鍵卡片 -->
+        </div>
+
+        <!-- 無搜尋結果提示 Empty State -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center space-y-3 bg-white rounded-2xl border border-dashed border-gray-300 p-8">
+            <div class="w-16 h-16 rounded-full bg-orange-50 text-pptBrand flex items-center justify-center text-2xl">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 class="font-bold text-pptNavy text-base">未找到符合的快捷鍵</h3>
+            <p class="text-xs text-gray-500 max-w-sm">請嘗試變更搜尋關鍵字，或切換上方分類分類進行查找。</p>
+            <button onclick="resetFilters()" class="text-xs text-pptBrand font-bold hover:underline">重設所有篩選</button>
+        </div>
+
+    </main>
+
+    <!-- 5. 頁尾 Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500 space-y-2 mt-auto">
+        <div class="flex items-center justify-center gap-4 text-gray-400">
+            <span><i class="fa-solid fa-keyboard mr-1"></i>快捷鍵數據即時化</span>
+            <span>•</span>
+            <span><i class="fa-solid fa-heart text-red-400 mr-1"></i>提升簡報製作效率</span>
+        </div>
+        <p>© 2026 Power 快捷鍵查詢小助手 · Designed for Office & PowerPoint Users</p>
+    </footer>
+
+    <!-- Toast 複製成功提示元件 -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-pptNavy text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all transform translate-y-20 opacity-0 z-50 text-xs sm:text-sm border border-slate-700">
+        <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span id="toastMsg">已成功複製快捷鍵！</span>
+    </div>
+
+    <!-- 6. 快捷鍵記憶大考驗 Modal -->
+    <div id="quizModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeQuizModal()">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl modal-animate relative" onclick="event.stopPropagation()">
+            <!-- 關閉鈕 -->
+            <button onclick="closeQuizModal()" class="absolute top-4 right-4 text-gray-400 hover:text-pptNavy w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="flex items-center gap-3 border-b border-gray-100 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-pptAccent text-pptBrand flex items-center justify-center font-bold text-xl">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-pptNavy">Power 快捷鍵記憶大考驗</h3>
+                    <p class="text-xs text-gray-500">測試並強化您的 PPT 簡報快捷鍵記憶力</p>
+                </div>
+            </div>
+
+            <!-- Quiz Main Content Container -->
+            <div id="quizContent" class="space-y-5">
+                <!-- 由 JS 動態渲染題庫內容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 快捷鍵完整資料庫 (Shortcuts Database)
+        // ==========================================
+        const shortcutsData = [
+            // --- 簡報播放 (Presentation / Slide Show) ---
+            {
+                id: 'p1',
+                category: '簡報播放',
+                title: '從頭開始播放簡報',
+                desc: '無論目前處於哪張投影片，直接從第一張開始進入全螢幕播放簡報模式。',
+                keysWin: ['F5'],
+                keysMac: ['Fn', 'F5'],
+                tags: ['播放', '開始', '全螢幕']
+            },
+            {
+                id: 'p2',
+                category: '簡報播放',
+                title: '從目前投影片播放',
+                desc: '從目前正在編輯的這張投影片開始播放簡報，節省尋找時間。',
+                keysWin: ['Shift', 'F5'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'Return'],
+                tags: ['播放', '目前', '這頁']
+            },
+            {
+                id: 'p3',
+                category: '簡報播放',
+                title: '播放時顯示/隱藏黑屏',
+                desc: '在播放簡報時按下此鍵可暫時使畫面變全黑，將觀眾注意力轉回講者身上。',
+                keysWin: ['B'],
+                keysMac: ['B'],
+                tags: ['黑屏', '黑畫面', '暫停', '專注']
+            },
+            {
+                id: 'p4',
+                category: '簡報播放',
+                title: '播放時顯示/隱藏白屏',
+                desc: '在播放簡報時按下此鍵可暫時使畫面變全白（白板功能）。',
+                keysWin: ['W'],
+                keysMac: ['W'],
+                tags: ['白屏', '白畫面', '白板']
+            },
+            {
+                id: 'p5',
+                category: '簡報播放',
+                title: '開啟簡報者檢視模式',
+                desc: '開啟雙螢幕講者模式，可瀏覽備忘稿、下一張預覽與時間計時器。',
+                keysWin: ['Alt', 'F5'],
+                keysMac: ['Option ⌥', 'F5'],
+                tags: ['講者', '備忘稿', '雙螢幕', '計時']
+            },
+            {
+                id: 'p6',
+                category: '簡報播放',
+                title: '切換畫筆工具 (雷射筆/畫筆)',
+                desc: '播放簡報時將滑鼠指標切換為紅字畫筆，便於直接在畫面上圈選重點。',
+                keysWin: ['Ctrl', 'P'],
+                keysMac: ['Cmd ⌘', 'P'],
+                tags: ['畫筆', '塗鴉', '圈選', '指標']
+            },
+            {
+                id: 'p7',
+                category: '簡報播放',
+                title: '清除畫面上所有筆劃',
+                desc: '播放時一鍵清除所有使用畫筆在投影片上繪製的線條與標註。',
+                keysWin: ['E'],
+                keysMac: ['E'],
+                tags: ['擦除', '清除', '筆跡']
+            },
+            {
+                id: 'p8',
+                category: '簡報播放',
+                title: '跳至指定頁數投影片',
+                desc: '播放時先輸入「頁碼數字」再按下 Enter 鍵，即可直接跳轉至該頁。',
+                keysWin: ['數字鍵', '+', 'Enter'],
+                keysMac: ['數字鍵', '+', 'Return'],
+                tags: ['跳頁', '頁碼', '直達']
+            },
+
+            // --- 投影片編輯 (Slide Management) ---
+            {
+                id: 's1',
+                category: '投影片編輯',
+                title: '新增一張投影片',
+                desc: '在目前選取的投影片下方快速插入一張全新投影片。',
+                keysWin: ['Ctrl', 'M'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'N'],
+                tags: ['新增', '插入', '新頁']
+            },
+            {
+                id: 's2',
+                category: '投影片編輯',
+                title: '複製重覆投影片',
+                desc: '直接將選取的投影片完整複製並貼於下一頁（Duplicate）。',
+                keysWin: ['Ctrl', 'D'],
+                keysMac: ['Cmd ⌘', 'D'],
+                tags: ['複製', '重複', '產生']
+            },
+            {
+                id: 's3',
+                category: '投影片編輯',
+                title: '上移/下移投影片順序',
+                desc: '選取左側預覽圖中的投影片，快速向上或向下調整排版順序。',
+                keysWin: ['Ctrl', 'Up / Down'],
+                keysMac: ['Cmd ⌘', 'Up / Down'],
+                tags: ['排序', '移動', '調整']
+            },
+
+            // --- 文字與格式 (Text & Formatting) ---
+            {
+                id: 't1',
+                category: '文字與格式',
+                title: '複製格式',
+                desc: '複製目前所選文字或物件的外觀樣式（色彩、邊框、字體等）。',
+                keysWin: ['Ctrl', 'Shift', 'C'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'C'],
+                tags: ['格式刷', '複製樣式', '外觀']
+            },
+            {
+                id: 't2',
+                category: '文字與格式',
+                title: '貼上格式',
+                desc: '將已複製的視覺樣式套用至新選取的文字或物件上。',
+                keysWin: ['Ctrl', 'Shift', 'V'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'V'],
+                tags: ['貼上樣式', '套用格式']
+            },
+            {
+                id: 't3',
+                category: '文字與格式',
+                title: '快速放大字體大小',
+                desc: '選取文字後，快速將字級放大一階。',
+                keysWin: ['Ctrl', 'Shift', '>'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', '>'],
+                tags: ['字體', '放大', '變大']
+            },
+            {
+                id: 't4',
+                category: '文字與格式',
+                title: '快速縮小字體大小',
+                desc: '選取文字後，快速將字級縮小一階。',
+                keysWin: ['Ctrl', 'Shift', '<'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', '<'],
+                tags: ['字體', '縮小', '變小']
+            },
+            {
+                id: 't5',
+                category: '文字與格式',
+                title: '文字置中對齊',
+                desc: '將段落或文本框內的文字改為置中對齊。',
+                keysWin: ['Ctrl', 'E'],
+                keysMac: ['Cmd ⌘', 'E'],
+                tags: ['對齊', '置中', '文字']
+            },
+            {
+                id: 't6',
+                category: '文字與格式',
+                title: '文字靠左對齊',
+                desc: '將段落或文本框內的文字改為靠左對齊。',
+                keysWin: ['Ctrl', 'L'],
+                keysMac: ['Cmd ⌘', 'L'],
+                tags: ['對齊', '靠左']
+            },
+            {
+                id: 't7',
+                category: '文字與格式',
+                title: '文字靠右對齊',
+                desc: '將段落或文本框內的文字改為靠右對齊。',
+                keysWin: ['Ctrl', 'R'],
+                keysMac: ['Cmd ⌘', 'R'],
+                tags: ['對齊', '靠右']
+            },
+            {
+                id: 't8',
+                category: '文字與格式',
+                title: '文字加粗 (Bold)',
+                desc: '將選取的文字設定為粗體字型。',
+                keysWin: ['Ctrl', 'B'],
+                keysMac: ['Cmd ⌘', 'B'],
+                tags: ['粗體', '強調']
+            },
+
+            // --- 物件與對齊 (Objects & Shapes) ---
+            {
+                id: 'o1',
+                category: '物件與對齊',
+                title: '組合物件 (群組 Group)',
+                desc: '將多個選取的圖片、圖形或文字框結合成一個群組物件，便於整體移動。',
+                keysWin: ['Ctrl', 'G'],
+                keysMac: ['Cmd ⌘', 'Option ⌥', 'G'],
+                tags: ['群組', '組合', '打組']
+            },
+            {
+                id: 'o2',
+                category: '物件與對齊',
+                title: '取消物件組合 (解散群組)',
+                desc: '將已群組的物件拆解回獨立的個體元件。',
+                keysWin: ['Ctrl', 'Shift', 'G'],
+                keysMac: ['Cmd ⌘', 'Option ⌥', 'Shift ⇧', 'G'],
+                tags: ['解散', '拆開', '解組']
+            },
+            {
+                id: 'o3',
+                category: '物件與對齊',
+                title: '複製物件並平行/垂直移動',
+                desc: '按住 Ctrl + Shift 並拖曳物件，可以垂直或水平等距離複製該物件。',
+                keysWin: ['Ctrl', 'Shift', '拖曳'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', '拖曳'],
+                tags: ['對齊拖曳', '平行複製', '等比']
+            },
+            {
+                id: 'o4',
+                category: '物件與對齊',
+                title: '將物件移至最上層',
+                desc: '將選取的圖形或圖片移至所有重疊物件的最頂層。',
+                keysWin: ['Ctrl', 'Shift', ']'],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'F'],
+                tags: ['圖層', '最上層', '頂層']
+            },
+            {
+                id: 'o5',
+                category: '物件與對齊',
+                title: '將物件移至最下層',
+                desc: '將選取的圖形或圖片移至所有重疊物件的最底層。',
+                keysWin: ['Ctrl', 'Shift', '['],
+                keysMac: ['Cmd ⌘', 'Shift ⇧', 'B'],
+                tags: ['圖層', '最下層', '底層']
+            },
+
+            // --- 視圖與介面 (View & Zoom) ---
+            {
+                id: 'v1',
+                category: '視圖與介面',
+                title: '顯示 / 隱藏網格線',
+                desc: '在畫面上開啟對齊用網格線，協助精確排版與元件對齊。',
+                keysWin: ['Shift', 'F9'],
+                keysMac: ['Shift ⇧', 'F9'],
+                tags: ['網格', '對齊', '輔助線']
+            },
+            {
+                id: 'v2',
+                category: '視圖與介面',
+                title: '顯示 / 隱藏參考線',
+                desc: '切換畫面的十字輔助參考線。',
+                keysWin: ['Alt', 'F9'],
+                keysMac: ['Option ⌥', 'F9'],
+                tags: ['參考線', '排版', '標尺']
+            },
+            {
+                id: 'v3',
+                category: '視圖與介面',
+                title: '快速展開 / 隱藏 功能區 (Ribbon)',
+                desc: '收合上方工具列功能區，以釋放出更大的投影片編輯視野。',
+                keysWin: ['Ctrl', 'F1'],
+                keysMac: ['Cmd ⌘', 'Option ⌥', 'R'],
+                tags: ['工具列', '隱藏', '全螢幕']
+            },
+
+            // --- 常用基礎 (General & Basics) ---
+            {
+                id: 'g1',
+                category: '常用基礎',
+                title: '復原上一動作 (Undo)',
+                desc: '撤銷剛才的操作步驟。',
+                keysWin: ['Ctrl', 'Z'],
+                keysMac: ['Cmd ⌘', 'Z'],
+                tags: ['復原', '撤銷', '上一步']
+            },
+            {
+                id: 'g2',
+                category: '常用基礎',
+                title: '重做 / 重複上一動作 (Redo)',
+                desc: '重新執行剛才復原的操作，或是重複上一動作（如重複複製）。',
+                keysWin: ['Ctrl', 'Y'],
+                keysMac: ['Cmd ⌘', 'Y'],
+                tags: ['重做', '重複']
+            },
+            {
+                id: 'g3',
+                category: '常用基礎',
+                title: '插入超連結',
+                desc: '為選取的文字、按鈕或圖形快速加入網頁連結或跳頁連結。',
+                keysWin: ['Ctrl', 'K'],
+                keysMac: ['Cmd ⌘', 'K'],
+                tags: ['連結', '網址', '超連結']
+            },
+            {
+                id: 'g4',
+                category: '常用基礎',
+                title: '儲存檔案 (Save)',
+                desc: '隨時儲存目前的簡報編輯進度。',
+                keysWin: ['Ctrl', 'S'],
+                keysMac: ['Cmd ⌘', 'S'],
+                tags: ['存檔', '儲存']
+            }
+        ];
+
+        // ==========================================
+        // 2. 狀態管理 (State Management)
+        // ==========================================
+        let currentOS = 'win'; // 'win' 或 'mac'
+        let currentCategory = '全選';
+        let searchQuery = '';
+        let showFavOnly = false;
+        let favoriteIds = JSON.parse(localStorage.getItem('power_shortcut_favs') || '[]');
+
+        // 分類清單
+        const categories = ['全選', '簡報播放', '投影片編輯', '文字與格式', '物件與對齊', '視圖與介面', '常用基礎'];
+
+        // ==========================================
+        // 3. UI 渲染邏輯 (UI Rendering Functions)
+        // ==========================================
+        
+        // 渲染分類 Tabs
+        function renderCategories() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => {
+                const isActive = (currentCategory === cat);
+                const activeClass = isActive 
+                    ? 'bg-pptBrand text-white shadow-md font-bold' 
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
+                return `
+                    <button onclick="setCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap ${activeClass}">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // 渲染快捷鍵卡片列表
+        function renderShortcuts() {
+            const grid = document.getElementById('shortcutsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            // 廣義過濾
+            const filtered = shortcutsData.filter(item => {
+                // 分類過濾
+                if (currentCategory !== '全選' && item.category !== currentCategory) return false;
+
+                // 我的最愛過濾
+                if (showFavOnly && !favoriteIds.includes(item.id)) return false;
+
+                // 搜尋過濾
+                if (searchQuery.trim() !== '') {
+                    const q = searchQuery.toLowerCase();
+                    const matchTitle = item.title.toLowerCase().includes(q);
+                    const matchDesc = item.desc.toLowerCase().includes(q);
+                    const matchTags = item.tags.some(t => t.toLowerCase().includes(q));
+                    const keys = (currentOS === 'win' ? item.keysWin : item.keysMac).join(' ').toLowerCase();
+                    const matchKeys = keys.includes(q);
+
+                    return matchTitle || matchDesc || matchTags || matchKeys;
+                }
+
+                return true;
+            });
+
+            // 更新總筆數與最愛計數
+            document.getElementById('totalCount').textContent = filtered.length;
+            document.getElementById('favCountBadge').textContent = favoriteIds.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            // 生成卡片 HTML
+            grid.innerHTML = filtered.map(item => {
+                const isFav = favoriteIds.includes(item.id);
+                const keysList = currentOS === 'win' ? item.keysWin : item.keysMac;
+
+                // 產生擬真鍵盤標籤
+                const keysHtml = keysList.map((k, idx) => {
+                    if (k === '+' || k === '拖曳') {
+                        return `<span class="text-xs font-bold text-gray-400 mx-0.5">${k}</span>`;
+                    }
+                    return `<kbd class="kbd-key">${k}</kbd>`;
+                }).join('');
+
+                return `
+                    <div class="shortcut-card bg-white rounded-2xl p-5 border border-gray-200/80 flex flex-col justify-between space-y-4 relative group shadow-sm">
+                        <div class="space-y-2">
+                            <!-- 頂部標籤與最愛星號 -->
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[11px] font-bold text-pptBrand bg-pptAccent px-2.5 py-0.5 rounded-full border border-pptBrand/15">
+                                    ${item.category}
+                                </span>
+                                <button onclick="toggleFavorite('${item.id}', event)" class="text-gray-300 hover:text-amber-400 transition-colors p-1" title="${isFav ? '移除收藏' : '加入收藏'}">
+                                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-star ${isFav ? 'text-amber-400' : ''} text-base"></i>
+                                </button>
+                            </div>
+
+                            <!-- 標題與描述 -->
+                            <h3 class="font-bold text-pptNavy text-base group-hover:text-pptBrand transition-colors">
+                                ${item.title}
+                            </h3>
+                            <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                                ${item.desc}
+                            </p>
+                        </div>
+
+                        <!-- 底部按鍵與複製功能 -->
+                        <div class="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center flex-wrap gap-1">
+                                ${keysHtml}
+                            </div>
+                            
+                            <button onclick="copyShortcut('${item.title}', '${keysList.join(' + ')}') " class="shrink-0 bg-gray-50 hover:bg-pptBrand hover:text-white text-gray-600 text-xs py-1.5 px-2.5 rounded-lg border border-gray-200 transition-all flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span class="hidden sm:inline">複製</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 4. 互動事件處裡 (Event Handlers)
+        // ==========================================
+
+        // 切換作業系統
+        function setOS(os) {
+            currentOS = os;
+            const btnWin = document.getElementById('btnOSWin');
+            const btnMac = document.getElementById('btnOSMac');
+
+            if (os === 'win') {
+                btnWin.className = 'px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 bg-white text-pptNavy shadow-sm font-bold';
+                btnMac.className = 'px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 text-gray-500 hover:text-pptNavy';
+            } else {
+                btnMac.className = 'px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 bg-white text-pptNavy shadow-sm font-bold';
+                btnWin.className = 'px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 text-gray-500 hover:text-pptNavy';
+            }
+            renderShortcuts();
+        }
+
+        // 切換分類
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderCategories();
+            renderShortcuts();
+        }
+
+        // 關鍵字搜尋輸入
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value;
+            const btnClear = document.getElementById('btnClearSearch');
+            
+            if (searchQuery.length > 0) {
+                btnClear.classList.remove('hidden');
+            } else {
+                btnClear.classList.add('hidden');
+            }
+            renderShortcuts();
+        }
+
+        // 熱門標籤快速搜尋
+        function quickSearch(term) {
+            const input = document.getElementById('searchInput');
+            input.value = term;
+            handleSearch();
+        }
+
+        // 清除搜尋
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            handleSearch();
+        }
+
+        // 切換最愛收藏狀態
+        function toggleFavorite(id, e) {
+            if (e) e.stopPropagation();
+            if (favoriteIds.includes(id)) {
+                favoriteIds = favoriteIds.filter(fId => fId !== id);
+            } else {
+                favoriteIds.push(id);
+            }
+            localStorage.setItem('power_shortcut_favs', JSON.stringify(favoriteIds));
+            renderShortcuts();
+        }
+
+        // 切換「只看最愛」模式
+        function toggleFavOnly() {
+            showFavOnly = !showFavOnly;
+            const btn = document.getElementById('btnFavOnly');
+            if (showFavOnly) {
+                btn.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800', 'font-bold');
+            } else {
+                btn.classList.remove('bg-amber-50', 'border-amber-300', 'text-amber-800', 'font-bold');
+            }
+            renderShortcuts();
+        }
+
+        // 重設篩選
+        function resetFilters() {
+            currentCategory = '全選';
+            searchQuery = '';
+            showFavOnly = false;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('btnClearSearch').classList.add('hidden');
+            document.getElementById('btnFavOnly').classList.remove('bg-amber-50', 'border-amber-300', 'text-amber-800', 'font-bold');
+            renderCategories();
+            renderShortcuts();
+        }
+
+        // 複製快捷鍵內容
+        function copyShortcut(title, keysStr) {
+            const textToCopy = `[Power 快捷鍵] ${title}: ${keysStr} (${currentOS === 'win' ? 'Windows' : 'Mac'})`;
+            
+            // 使用內建跨瀏覽器複製語法
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast(`已複製: ${title} (${keysStr})`);
+            } catch (err) {
+                showToast('複製失敗，請手動複製');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // 顯示 Toast 訊息
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // ==========================================
+        // 5. 快捷鍵測驗模式 (Quiz / Flashcard Mode)
+        // ==========================================
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+        let quizQuestions = [];
+
+        function openQuizModal() {
+            // 隨機抽選 5 題測驗題目
+            quizQuestions = [...shortcutsData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            
+            document.getElementById('quizModal').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').classList.add('hidden');
+        }
+
+        function renderQuizQuestion() {
+            const container = document.getElementById('quizContent');
+
+            if (quizCurrentIndex >= quizQuestions.length) {
+                // 測驗結束畫面
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-3xl font-bold">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-xl font-bold text-pptNavy">測驗完成！</h4>
+                            <p class="text-sm text-gray-500">您的答對成績為：<span class="text-pptBrand font-bold text-lg">${quizScore} / ${quizQuestions.length}</span></p>
+                        </div>
+                        <p class="text-xs text-gray-400">熟能生巧，多加練習簡報製作速度倍增！</p>
+                        <button onclick="openQuizModal()" class="w-full bg-pptBrand hover:bg-pptHover text-white font-bold py-3 rounded-xl shadow-md transition-all">
+                            再次挑戰
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const q = quizQuestions[quizCurrentIndex];
+            const correctKeys = (currentOS === 'win' ? q.keysWin : q.keysMac).join(' + ');
+
+            // 生成干擾選項 (3 個錯誤 + 1 個正確)
+            let wrongOptions = shortcutsData
+                .filter(item => item.id !== q.id)
+                .map(item => (currentOS === 'win' ? item.keysWin : item.keysMac).join(' + '));
+            
+            // 去重
+            wrongOptions = [...new Set(wrongOptions)].sort(() => 0.5 - Math.random()).slice(0, 3);
+            const options = [...wrongOptions, correctKeys].sort(() => 0.5 - Math.random());
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span>題目 ${quizCurrentIndex + 1} / ${quizQuestions.length}</span>
+                        <span>系統：${currentOS === 'win' ? 'Windows' : 'Mac'}</span>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center space-y-1">
+                        <span class="text-[10px] text-pptBrand font-bold bg-pptAccent px-2 py-0.5 rounded-full">${q.category}</span>
+                        <h4 class="text-base sm:text-lg font-bold text-pptNavy">${q.title}</h4>
+                        <p class="text-xs text-gray-500">${q.desc}</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2 pt-2">
+                        ${options.map(opt => `
+                            <button onclick="checkQuizAnswer('${opt.replace(/'/g, "\\'")}', '${correctKeys.replace(/'/g, "\\'")}')" class="w-full text-left p-3.5 rounded-xl border border-gray-200 hover:border-pptBrand hover:bg-pptAccent/50 transition-all font-mono text-sm text-pptNavy font-bold flex items-center justify-between group">
+                                <span><i class="fa-regular fa-keyboard text-gray-400 mr-2 group-hover:text-pptBrand"></i>${opt}</span>
+                                <i class="fa-solid fa-chevron-right text-xs text-gray-300 group-hover:text-pptBrand"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkQuizAnswer(selected, correct) {
+            if (selected === correct) {
+                quizScore++;
+                showToast('答對了！太厲害了！');
+            } else {
+                showToast(`可惜答錯了！正確答案是：${correct}`);
+            }
+            quizCurrentIndex++;
+            setTimeout(renderQuizQuestion, 600);
+        }
+
+        // ==========================================
+        // 6. 初始化執行 (Page Load Initialization)
+        // ==========================================
+        window.onload = function() {
+            renderCategories();
+            renderShortcuts();
+        };
+    </script>
+</body>
+</html>
