@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4x4 記憶配對牌遊戲 | Memory Card Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bgWarm': '#F9F8F6',      /* 米白底色 */
+                        'cardBack': '#2C5E43',    /* 深綠色襯底 */
+                        'accentBrown': '#5C3D2E',  /* 棕色文字/邊框 */
+                        'accentGold': '#D4A373',   /* 質感金色 */
+                        'navyDark': '#1E2522'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F9F8F6;
+            color: #1E2522;
+            font-family: 'Noto Sans TC', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 3D Card Perspective */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
+
+        /* Card Back (Faced down, showing number #1-#16) */
+        .card-back {
+            background: linear-gradient(135deg, #2C5E43 0%, #1A3E2B 100%);
+            border: 2px solid #D4A373;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            color: #F9F8F6;
+        }
+
+        /* Card Front (Faced up, showing text content) */
+        .card-front {
+            background-color: #FFFFFF;
+            border: 2px solid #2C5E43;
+            transform: rotateY(180deg);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Matched status glowing border */
+        .card.matched .card-front {
+            border-color: #D4A373;
+            background-color: #F3FAF5;
+            box-shadow: 0 0 12px rgba(44, 94, 67, 0.3);
+        }
+
+        /* Pulse animation for match victory */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: popIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-3 sm:p-6">
+
+    <!-- HEADER -->
+    <header class="w-full max-w-lg text-center my-2 space-y-1">
+        <div class="flex items-center justify-center gap-2">
+            <i class="fa-solid fa-brain text-cardBack text-2xl"></i>
+            <h1 class="text-2xl sm:text-3xl font-black font-serif text-accentBrown tracking-wide">記憶翻牌大考驗</h1>
+        </div>
+        <p class="text-xs sm:text-sm text-gray-600">翻開卡片進行「標題」與「描述」配對</p>
+    </header>
+
+    <!-- DASHBOARD: MOVES, TIMER & BEST RECORD -->
+    <main class="w-full max-w-lg space-y-4 my-auto">
+        <div class="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-emerald-900/10 flex items-center justify-between text-xs sm:text-sm">
+            <!-- Moves counter -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-cardBack flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-footsteps"></i>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-[10px] uppercase font-bold tracking-wider">步數 Moves</div>
+                    <div id="movesCount" class="font-bold text-base text-navyDark">0</div>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-amber-50 text-accentBrown flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-[10px] uppercase font-bold tracking-wider">時間 Time</div>
+                    <div id="timerText" class="font-bold text-base text-navyDark">0 秒</div>
+                </div>
+            </div>
+
+            <!-- Best Score Record -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-amber-100/50 text-accentGold flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <div class="text-gray-400 text-[10px] uppercase font-bold tracking-wider">最佳紀錄 Best</div>
+                    <div id="bestRecordText" class="font-bold text-xs text-navyDark">-- 步</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4x4 CARD GRID CONTAINER -->
+        <div id="gameBoard" class="grid grid-cols-4 gap-2.5 sm:gap-3.5 w-full aspect-square perspective-1000 my-2">
+            <!-- 16 Cards generated dynamically via JavaScript -->
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="flex items-center justify-center gap-3 pt-2">
+            <button onclick="restartGame()" class="bg-cardBack hover:bg-emerald-800 text-white font-medium text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform active:scale-95">
+                <i class="fa-solid fa-rotate-right"></i>
+                重新開始 (Restart)
+            </button>
+            <button onclick="toggleAudio()" id="audioBtn" class="bg-white hover:bg-gray-50 text-accentBrown border border-gray-200 font-medium text-xs sm:text-sm px-4 py-2.5 rounded-full shadow-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-volume-high text-cardBack" id="audioIcon"></i>
+                <span id="audioText">音效開啟</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center my-2 text-[11px] text-gray-400">
+        4x4 Memory Match Game · Powered by Web Audio API & Tailwind CSS
+    </footer>
+
+    <!-- VICTORY MODAL (恭喜破關彈窗) -->
+    <div id="victoryModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-bgWarm rounded-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-accentGold shadow-2xl animate-pop relative">
+            <div class="w-16 h-16 bg-cardBack text-accentGold rounded-full flex items-center justify-center text-3xl mx-auto shadow-lg">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            
+            <div class="space-y-1">
+                <h2 class="text-2xl font-bold font-serif text-accentBrown">恭喜破關！</h2>
+                <p class="text-xs text-gray-500">太棒了！您成功翻開了所有 8 對配對卡片！</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-200/80 space-y-2 text-sm">
+                <div class="flex justify-between items-center text-gray-600">
+                    <span>總共花費步數：</span>
+                    <span id="finalMoves" class="font-bold text-cardBack text-base">0 步</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-600">
+                    <span>總共耗時：</span>
+                    <span id="finalTime" class="font-bold text-accentBrown text-base">0 秒</span>
+                </div>
+                <div id="newRecordBadge" class="hidden bg-amber-50 text-amber-700 text-xs font-bold py-1 px-3 rounded-full text-center border border-amber-200">
+                    🎉 刷新最佳紀錄！
+                </div>
+            </div>
+
+            <button onclick="restartGame(); closeVictoryModal();" class="w-full bg-cardBack hover:bg-emerald-800 text-white font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play"></i>
+                再玩一次 (Play Again)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* ======================================================
+           1. 預設 8 對配對內容 (標題 + 對應描述)
+           ====================================================== */
+        const defaultPairs = [
+            { id: 1, title: "Gemini AI", desc: "Google 多模態人工智慧" },
+            { id: 2, title: "圖書自動化", desc: "MARC 21 編目與館藏整理" },
+            { id: 3, title: "會計核對", desc: "每日帳款結算與傳票審核" },
+            { id: 4, title: "親子閱讀", desc: "推廣專案與現場流程控管" },
+            { id: 5, title: "提示詞工程", desc: "引導 AI 產出高品質內容" },
+            { id: 6, title: "數位行政", desc: "整合多功能數位工具效率" },
+            { id: 7, title: "數據校對", desc: "高流量資料表單審查" },
+            { id: 8, title: "持續學習", desc: "跨領域取得專業技術認證" }
+        ];
+
+        /* ======================================================
+           2. 遊戲狀態變數 (Game State Variables)
+           ====================================================== */
+        let cardsData = [];
+        let flippedCards = [];
+        let matchedCount = 0;
+        let moves = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isTimerRunning = false;
+        let isLockBoard = false;
+        let isAudioEnabled = true;
+
+        /* ======================================================
+           3. WEB AUDIO API 純音效合成器 (No External Files)
+           ====================================================== */
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 翻牌音效
+        function playFlipSound() {
+            if (!isAudioEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+                
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {}
+        }
+
+        // 配對成功雙合音效果
+        function playMatchSound() {
+            if (!isAudioEnabled || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                // 雙音符 C5 (523.25Hz) -> G5 (783.99Hz)
+                [523.25, 783.99].forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.1);
+
+                    gain.gain.setValueAtTime(0.2, now + index * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.1 + 0.25);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + index * 0.1);
+                    osc.stop(now + index * 0.1 + 0.25);
+                });
+            } catch (e) {}
+        }
+
+        // 勝利歡呼音效
+        function playVictorySound() {
+            if (!isAudioEnabled || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C, E, G, C6
+                notes.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.12);
+
+                    gain.gain.setValueAtTime(0.25, now + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.3);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.12);
+                    osc.stop(now + i * 0.12 + 0.3);
+                });
+            } catch (e) {}
+        }
+
+        /* ======================================================
+           4. 初始化與牌陣生成 (Init Game & Shuffle)
+           ====================================================== */
+        function initGame() {
+            // 拆解 8 對成 16 張卡片 (一張標題, 一張描述)
+            cardsData = [];
+            defaultPairs.forEach(pair => {
+                cardsData.push({ pairId: pair.id, type: 'title', text: pair.title });
+                cardsData.push({ pairId: pair.id, type: 'desc', text: pair.desc });
+            });
+
+            // 洗牌演算法 (Fisher-Yates Shuffle)
+            for (let i = cardsData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardsData[i], cardsData[j]] = [cardsData[j], cardsData[i]];
+            }
+
+            // 重置遊戲參數
+            flippedCards = [];
+            matchedCount = 0;
+            moves = 0;
+            timerSeconds = 0;
+            isLockBoard = false;
+            
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('timerText').textContent = "0 秒";
+            document.getElementById('movesCount').textContent = "0";
+
+            renderBoard();
+            loadBestRecord();
+        }
+
+        // 渲染 4x4 牌陣 DOM
+        function renderBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+
+            cardsData.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card cursor-pointer';
+                cardEl.dataset.index = index;
+                cardEl.dataset.pairId = card.pairId;
+
+                // 背面襯線數字編號 (#1 ~ #16)
+                const numberTag = index + 1;
+
+                cardEl.innerHTML = `
+                    <div class="card-inner">
+                        <!-- 卡片正面 (未翻牌: 深綠底 + 質感米白/金色襯線數字) -->
+                        <div class="card-back">
+                            <span class="text-xs text-accentGold/60 font-serif absolute top-1.5 left-2">★</span>
+                            <span class="font-serif text-lg sm:text-2xl font-bold tracking-wider text-accentGold">#${numberTag}</span>
+                            <span class="text-[9px] text-emerald-200/50 mt-1 uppercase tracking-widest font-mono">MEMORY</span>
+                        </div>
+                        <!-- 卡片背面 (翻開後: 內容展示) -->
+                        <div class="card-front text-center select-none">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full mb-1.5 ${card.type === 'title' ? 'bg-emerald-100 text-cardBack' : 'bg-amber-100 text-accentBrown'}">
+                                ${card.type === 'title' ? '標題' : '說明'}
+                            </span>
+                            <p class="text-xs sm:text-sm font-bold leading-tight ${card.type === 'title' ? 'text-navyDark font-serif' : 'text-gray-700 font-normal'}">
+                                ${card.text}
+                            </p>
+                        </div>
+                    </div>
+                `;
+
+                cardEl.addEventListener('click', () => handleCardClick(cardEl, index));
+                board.appendChild(cardEl);
+            });
+        }
+
+        /* ======================================================
+           5. 點擊與配對邏輯 (Flip & Match Logic)
+           ====================================================== */
+        function handleCardClick(cardEl, index) {
+            initAudioContext();
+
+            // 若板面已鎖定、已翻牌、或已配對成功則直接忽視
+            if (isLockBoard || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
+                return;
+            }
+
+            // 啟動計時器 (第一次翻牌時)
+            if (!isTimerRunning) {
+                startTimer();
+            }
+
+            // 執行翻牌
+            cardEl.classList.add('flipped');
+            playFlipSound();
+            flippedCards.push({ element: cardEl, index: index, data: cardsData[index] });
+
+            // 若翻開兩張牌，進行檢查
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('movesCount').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        // 檢查兩張牌是否配對成功
+        function checkMatch() {
+            isLockBoard = true;
+            const [card1, card2] = flippedCards;
+
+            const isMatch = card1.data.pairId === card2.data.pairId;
+
+            if (isMatch) {
+                // 配對成功：標記並保持翻開
+                setTimeout(() => {
+                    card1.element.classList.add('matched');
+                    card2.element.classList.add('matched');
+                    playMatchSound();
+                    
+                    matchedCount++;
+                    flippedCards = [];
+                    isLockBoard = false;
+
+                    // 檢查是否贏得遊戲 (全開 8 對)
+                    if (matchedCount === defaultPairs.length) {
+                        handleVictory();
+                    }
+                }, 300);
+            } else {
+                // 配對失敗：等待 1 秒後翻回去
+                setTimeout(() => {
+                    card1.element.classList.remove('flipped');
+                    card2.element.classList.remove('flipped');
+                    flippedCards = [];
+                    isLockBoard = false;
+                }, 1000);
+            }
+        }
+
+        /* ======================================================
+           6. 計時器與紀錄處理 (Timer & LocalStorage)
+           ====================================================== */
+        function startTimer() {
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                document.getElementById('timerText').textContent = `${timerSeconds} 秒`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function loadBestRecord() {
+            const bestMoves = localStorage.getItem('memory_game_best_moves');
+            if (bestMoves) {
+                document.getElementById('bestRecordText').textContent = `${bestMoves} 步`;
+            } else {
+                document.getElementById('bestRecordText').textContent = `-- 步`;
+            }
+        }
+
+        /* ======================================================
+           7. 勝利判定與彈窗 (Victory Modal & Record Save)
+           ====================================================== */
+        function handleVictory() {
+            stopTimer();
+            playVictorySound();
+
+            document.getElementById('finalMoves').textContent = `${moves} 步`;
+            document.getElementById('finalTime').textContent = `${timerSeconds} 秒`;
+
+            // 檢查並更新 LocalStorage 最低步數紀錄
+            const currentBest = localStorage.getItem('memory_game_best_moves');
+            const badge = document.getElementById('newRecordBadge');
+
+            if (!currentBest || moves < parseInt(currentBest)) {
+                localStorage.setItem('memory_game_best_moves', moves);
+                badge.classList.remove('hidden');
+                loadBestRecord();
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            // 跳出勝利彈窗 Modal
+            setTimeout(() => {
+                document.getElementById('victoryModal').classList.remove('hidden');
+            }, 500);
+        }
+
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.add('hidden');
+        }
+
+        function restartGame() {
+            closeVictoryModal();
+            initGame();
+        }
+
+        // 音效開關切換
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const audioIcon = document.getElementById('audioIcon');
+            const audioText = document.getElementById('audioText');
+
+            if (isAudioEnabled) {
+                audioIcon.className = "fa-solid fa-volume-high text-cardBack";
+                audioText.textContent = "音效開啟";
+            } else {
+                audioIcon.className = "fa-solid fa-volume-xmark text-gray-400";
+                audioText.textContent = "音效靜音";
+            }
+        }
+
+        /* ======================================================
+           8. 遊戲啟動 (On Window Load)
+           ====================================================== */
+        window.onload = function() {
+            initGame();
+        };
+    </script>
+</body>
+</html>
