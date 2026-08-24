@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趙憶慧 | 個人數位履歷與 AI 作品集</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans TC & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandTeal: '#006A4E',      /* 主視覺深翡翠綠 */
+                        brandTealHover: '#00523C',
+                        brandOrange: '#E87722',    /* 點綴活力橘 */
+                        brandOrangeHover: '#D06211',
+                        bgWarm: '#F6F5F2',         /* 質感暖米白底色 */
+                        bgWarmCard: '#EFECE6',
+                        textDark: '#22252A',       /* 沉穩深灰黑字體 */
+                        textMuted: '#6E737D',
+                        tealLight: '#E6F2ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', '"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F6F5F2;
+            color: #22252A;
+            font-family: 'Noto Sans TC', 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* 柔和底色圓圈背景裝飾 */
+        .bg-circle-dec {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(239, 236, 230, 0.75);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 彈窗平滑 Fade In 動畫 */
+        .modal-animate {
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* 卡片懸浮滑過與圓角微動效 */
+        .hover-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -10px rgba(0, 106, 78, 0.12), 0 8px 12px -4px rgba(0, 0, 0, 0.04);
+        }
+
+        /* 自訂滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F6F5F2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #006A4E;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-bgWarm text-textDark overflow-x-hidden">
+
+    <!-- 頂部導覽列 Header -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-gray-200/60 sticky top-0 z-40 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo 區域 -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 rounded-full bg-brandTeal text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-shapes text-brandOrange text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight text-textDark block leading-none">趙憶慧</span>
+                    <span class="text-[11px] font-semibold text-brandTeal tracking-widest uppercase mt-1 block">YI-HUI CHAO PORTFOLIO</span>
+                </div>
+            </a>
+
+            <!-- 中間導覽選單 -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-bold text-textDark">
+                <a href="#about" class="hover:text-brandTeal transition-colors">關於趙憶慧</a>
+                <a href="#ai-tools" class="hover:text-brandTeal transition-colors">AI 小工具</a>
+                <a href="#certificates" class="hover:text-brandTeal transition-colors">專業證書</a>
+                <a href="#experience" class="hover:text-brandTeal transition-colors">工作經歷</a>
+            </nav>
+
+            <!-- 右側重點按鈕 -->
+            <button onclick="copyContactInfo()" class="bg-brandOrange hover:bg-brandOrangeHover text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md shadow-brandOrange/20 transition-all flex items-center gap-2 active:scale-95">
+                <i class="fa-regular fa-paper-plane"></i>
+                <span>聯繫我</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主內容區 Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-20">
+
+        <!-- 1. Hero 區塊 -->
+        <section class="relative bg-white rounded-[2.5rem] p-6 sm:p-12 lg:p-16 border border-gray-100 shadow-sm overflow-hidden">
+            <!-- 飾底大圖圈 -->
+            <div class="bg-circle-dec -top-20 -left-20 w-96 h-96"></div>
+            <div class="bg-circle-dec -bottom-20 -right-20 w-80 h-80"></div>
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- 左側文案 -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tealLight text-brandTeal text-xs font-extrabold tracking-wider uppercase border border-brandTeal/15">
+                        <i class="fa-solid fa-sparkles text-brandOrange"></i>
+                        Expanding Operational Thinking with AI
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl font-black text-textDark leading-tight tracking-tight">
+                        拓展創新運營思維<br>
+                        <span class="text-brandTeal">跨領域數據與 AI 自動化</span>整合
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-textMuted leading-relaxed max-w-2xl font-medium">
+                        具備圖書館資訊專業編目與會計帳務精細處理背景。擅長運用 AI 提示詞工程、Powershell / Python 自動化腳本與互動小工具，翻轉傳統行政工作流程，極大化數據整理與簡報呈現效率。
+                    </p>
+
+                    <!-- 按鈕組合 -->
+                    <div class="flex flex-wrap lg:flex-nowrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 pt-2">
+                        <a href="#ai-tools" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-tealLight font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all flex items-center gap-2 group whitespace-nowrap text-xs sm:text-sm shrink-0">
+                            <span>探索 AI 小工具</span>
+                            <div class="w-6 h-6 rounded-full bg-brandTeal text-white flex items-center justify-center group-hover:translate-x-1 transition-transform shrink-0">
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </div>
+                        </a>
+
+                        <a href="#certificates" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-tealLight font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all flex items-center gap-2 whitespace-nowrap text-xs sm:text-sm shrink-0">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>專業證書與能力認證</span>
+                        </a>
+
+                        <a href="#experience" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-tealLight font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all flex items-center gap-2 whitespace-nowrap text-xs sm:text-sm shrink-0">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span>專業工作經歷與實務經驗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 右側寫真照片 -->
+                <div class="lg:col-span-5 relative flex justify-center items-center">
+                    <div class="relative w-40 h-40 sm:w-48 sm:h-48">
+                        <!-- 主圖圓形大框 -->
+                        <div class="w-full h-full rounded-full p-1.5 bg-gradient-to-tr from-brandTeal via-teal-500 to-brandOrange shadow-xl overflow-hidden relative z-10">
+                            <img src="https://chanel07210910-ctrl.github.io/portfolio2026/20260818%20161640.png" onerror="this.src='https://placehold.co/400x400/006A4E/FFFFFF'" alt="趙憶慧" class="w-full h-full object-cover object-[center_20%] scale-105 rounded-full bg-white">
+                        </div>
+
+                        <!-- 圓形裝飾外環線 -->
+                        <div class="absolute -inset-4 border-2 border-dashed border-brandTeal/30 rounded-full animate-spin-slow pointer-events-none"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. 關於趙憶慧 區塊 -->
+        <section id="about" class="space-y-8">
+            <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div class="space-y-5">
+                    <div>
+                        <span class="text-xs font-extrabold text-brandOrange tracking-widest uppercase block">About Me</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-textDark">關於趙憶慧：給予細緻支援與創新守護</h2>
+                    </div>
+
+                    <p class="text-sm sm:text-base text-textMuted leading-relaxed">
+                        具備長達 12~13 年跨領域實務經驗，涵蓋公家圖書館資訊分類、紡織業會計帳務、蝦皮門市收銀與台固保全樓管行政。長期深耕於資料系統化與流程細節管理。
+                    </p>
+
+                    <p class="text-sm sm:text-base text-textMuted leading-relaxed">
+                        近年積極將 AI 生成式技術與工作實務結合，專注於 PowerPoint 快速製作、鍵盤快捷鍵小工具開發與個人數位作品呈現，致力於將繁瑣數據與行政作業優化為直覺、高效的現代化流程。
+                    </p>
+
+                    <!-- 3 大能力特點標籤 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="p-4 rounded-2xl bg-bgWarm border border-gray-200/60 text-center space-y-1">
+                            <i class="fa-solid fa-list-check text-brandTeal text-xl"></i>
+                            <div class="font-bold text-sm text-textDark">資訊編目分類</div>
+                            <div class="text-[11px] text-gray-500">圖書館專業架構</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-bgWarm border border-gray-200/60 text-center space-y-1">
+                            <i class="fa-solid fa-file-invoice-dollar text-brandTeal text-xl"></i>
+                            <div class="font-bold text-sm text-textDark">精準會計核對</div>
+                            <div class="text-[11px] text-gray-500">嚴謹數據把關</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-bgWarm border border-gray-200/60 text-center space-y-1">
+                            <i class="fa-solid fa-wand-magic-sparkles text-brandTeal text-xl"></i>
+                            <div class="font-bold text-sm text-textDark">AI 自動化應用</div>
+                            <div class="text-[11px] text-gray-500">提示詞與工具開發</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. AI 小工具專案作品集 -->
+        <section id="ai-tools" class="space-y-8">
+            <!-- 標題欄 -->
+            <div class="text-center space-y-2">
+                <span class="text-xs font-extrabold text-brandOrange tracking-widest uppercase block">Interactive Applications</span>
+                <h2 class="text-3xl font-black text-textDark">AI 小工具專案作品集</h2>
+                <p class="text-sm text-textMuted">點擊下方作品卡片可直接開啟體驗線上互動應用程式</p>
+            </div>
+
+            <!-- 卡片 Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- 卡片 01: Power BI 快捷鍵小助手 -->
+                <a href="https://chanel07210910-ctrl.github.io/portfolio2026/power.html" target="_blank" rel="noopener noreferrer" class="hover-card bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="aspect-video rounded-2xl bg-gradient-to-br from-emerald-800 to-brandTeal p-4 flex flex-col justify-between text-white relative overflow-hidden">
+                            <div class="flex justify-between items-start z-10">
+                                <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Tool / Office</span>
+                                <i class="fa-solid fa-keyboard text-lg text-brandOrange"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="text-xs text-emerald-200">PowerPoint / BI</div>
+                                <div class="font-extrabold text-base">快捷鍵查詢小助手</div>
+                            </div>
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors">Power BI 快捷鍵查詢小助手</h3>
+                            <p class="text-xs text-textMuted line-clamp-2">收錄 PowerPoint 與 Power BI 簡報製作全方位快捷鍵與互動測驗小遊戲。</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-brandTeal group-hover:text-brandOrange transition-colors mt-4">
+                        <span>開啟線上工具</span>
+                        <div class="w-7 h-7 rounded-full bg-tealLight group-hover:bg-brandOrange group-hover:text-white flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 卡片 02: 大老二小遊戲 -->
+                <a href="https://chanel07210910-ctrl.github.io/portfolio2026/big-brother.html" target="_blank" rel="noopener noreferrer" class="hover-card bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="aspect-video rounded-2xl bg-gradient-to-br from-amber-600 to-brandOrange p-4 flex flex-col justify-between text-white relative overflow-hidden">
+                            <div class="flex justify-between items-start z-10">
+                                <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Game / Logic</span>
+                                <i class="fa-solid fa-gamepad text-lg text-yellow-200"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="text-xs text-amber-100">Card Game</div>
+                                <div class="font-extrabold text-base">大老二線上小遊戲</div>
+                            </div>
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors">大老二小遊戲</h3>
+                            <p class="text-xs text-textMuted line-clamp-2">經典撲克牌大老二遊戲，包含完整牌型發牌邏輯與自動勝負判定演算法。</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-brandTeal group-hover:text-brandOrange transition-colors mt-4">
+                        <span>開啟遊戲體驗</span>
+                        <div class="w-7 h-7 rounded-full bg-tealLight group-hover:bg-brandOrange group-hover:text-white flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 卡片 03: 記憶翻牌大考驗 -->
+                <a href="https://chanel07210910-ctrl.github.io/portfolio2026/code_artifact.html" target="_blank" rel="noopener noreferrer" class="hover-card bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="aspect-video rounded-2xl bg-gradient-to-br from-teal-700 to-cyan-800 p-4 flex flex-col justify-between text-white relative overflow-hidden">
+                            <div class="flex justify-between items-start z-10">
+                                <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Interactive</span>
+                                <i class="fa-solid fa-brain text-lg text-teal-200"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="text-xs text-teal-100">Memory Challenge</div>
+                                <div class="font-extrabold text-base">記憶翻牌大考驗</div>
+                            </div>
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors">記憶翻牌大考驗</h3>
+                            <p class="text-xs text-textMuted line-clamp-2">考驗大腦記憶力的翻牌圖案對對碰遊戲，包含計時器與翻牌動效。</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-brandTeal group-hover:text-brandOrange transition-colors mt-4">
+                        <span>開啟遊戲體驗</span>
+                        <div class="w-7 h-7 rounded-full bg-tealLight group-hover:bg-brandOrange group-hover:text-white flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 卡片 04: 三卡運勢靈籤 -->
+                <a href="https://0804test-production-10e3.up.railway.app" target="_blank" rel="noopener noreferrer" class="hover-card bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="aspect-video rounded-2xl bg-gradient-to-br from-slate-800 to-purple-900 p-4 flex flex-col justify-between text-white relative overflow-hidden">
+                            <div class="flex justify-between items-start z-10">
+                                <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">AI App / Railway</span>
+                                <i class="fa-solid fa-wand-magic text-lg text-purple-300"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="text-xs text-purple-200">Tarot & AI</div>
+                                <div class="font-extrabold text-base">三卡運勢靈籤</div>
+                            </div>
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors">三卡運勢靈籤</h3>
+                            <p class="text-xs text-textMuted line-clamp-2">結合 AI 抽牌與靈籤解讀的互動運勢占卜工具， deployed on Railway。</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-brandTeal group-hover:text-brandOrange transition-colors mt-4">
+                        <span>開啟靈籤體驗</span>
+                        <div class="w-7 h-7 rounded-full bg-tealLight group-hover:bg-brandOrange group-hover:text-white flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- 4. 專業證書展示牆 -->
+        <section id="certificates" class="space-y-8">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-extrabold text-brandOrange tracking-widest uppercase block">Certifications</span>
+                <h2 class="text-3xl font-black text-textDark">專業證書與能力認證</h2>
+                <p class="text-sm text-textMuted">點擊證書縮圖可放大檢視詳細說明與原廠認證資訊</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 證書 01 -->
+                <div class="hover-card bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4 cursor-pointer group" onclick="openCertModal('微軟 Office PowerPoint 認證', 'https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191071596', '獲得微軟原廠簡報認證，熟練掌握視覺排版、母片設計與動態轉場。具備高效簡報製作能力，能將複雜資訊轉化為清晰易懂的視覺圖表。')">
+                    <div class="overflow-hidden rounded-2xl bg-gray-100 aspect-video relative">
+                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191071596" alt="微軟 Office PowerPoint 認證" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-brandTeal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-xs">
+                            <i class="fa-solid fa-magnifying-glass-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-brandTeal bg-tealLight px-2.5 py-0.5 rounded-full">Microsoft Certified</span>
+                        <h4 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors mt-1">微軟 Office PowerPoint 認證</h4>
+                        <p class="text-xs text-textMuted line-clamp-2 mt-1">獲得微軟原廠簡報認證，熟練掌握視覺排版、母片設計與動態轉場...</p>
+                    </div>
+                </div>
+
+                <!-- 證書 02 -->
+                <div class="hover-card bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4 cursor-pointer group" onclick="openCertModal('圖書館資訊專業編目認證', 'https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191066177?key=228e434c8b734543174bc380422af4cd277cf77be59fb80dd218e6108faad67c', '通過圖書館資訊編目認證，具備資料結構化分類與檢索能力。')">
+                    <div class="overflow-hidden rounded-2xl bg-gray-100 aspect-video relative">
+                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191066177?key=228e434c8b734543174bc380422af4cd277cf77be59fb80dd218e6108faad67c" alt="圖書館資訊專業編目認證" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-brandTeal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-xs">
+                            <i class="fa-solid fa-magnifying-glass-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-brandTeal bg-tealLight px-2.5 py-0.5 rounded-full">Information & Library</span>
+                        <h4 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors mt-1">圖書館資訊專業編目認證</h4>
+                        <p class="text-xs text-textMuted line-clamp-2 mt-1">通過圖書館資訊編目認證，具備資料結構化分類與檢索能力。</p>
+                    </div>
+                </div>
+
+                <!-- 證書 03 -->
+                <div class="hover-card bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4 cursor-pointer group" onclick="openCertModal('記帳士與會計實務檢定', 'https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191055547', '具備財務報表編製與稅務申報實務，數據核對精準嚴謹。')">
+                    <div class="overflow-hidden rounded-2xl bg-gray-100 aspect-video relative">
+                        <img src="https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/191055547" alt="記帳士與會計實務檢定" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-brandTeal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-xs">
+                            <i class="fa-solid fa-magnifying-glass-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-brandTeal bg-tealLight px-2.5 py-0.5 rounded-full">Accounting & Finance</span>
+                        <h4 class="font-bold text-textDark text-lg group-hover:text-brandTeal transition-colors mt-1">記帳士與會計實務檢定</h4>
+                        <p class="text-xs text-textMuted line-clamp-2 mt-1">具備財務報表編製與稅務申報實務，數據核對精準嚴謹。</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. 專業工作經歷 -->
+        <section id="experience" class="space-y-8">
+            <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 border border-gray-100 shadow-sm space-y-8">
+                
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-gray-100 pb-6 gap-4">
+                    <div>
+                        <span class="text-xs font-extrabold text-brandOrange tracking-widest uppercase block">Career Journey</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-textDark">專業工作經歷與實務經驗</h2>
+                    </div>
+                    <div class="text-xs text-brandTeal font-bold bg-tealLight px-4 py-2 rounded-full w-fit">
+                        累積 12~13 年跨領域實務經驗
+                    </div>
+                </div>
+
+                <!-- 內容佈局 -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- 左圖 -->
+                    <div class="lg:col-span-3 rounded-3xl overflow-hidden bg-bgWarmCard aspect-[3/4] hidden lg:block relative shadow-inner">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Work Environment" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- 右側經歷清單列表 -->
+                    <div class="lg:col-span-9 space-y-4">
+
+                        <!-- 經歷 01 -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-bgWarm hover:bg-white hover:shadow-md transition-all border border-gray-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="text-sm font-extrabold bg-white text-brandTeal border border-brandTeal/30 px-3.5 py-1 rounded-full">2026/03 - 2026/05</span>
+                                    <span class="text-sm font-bold text-brandOrange">行政管理</span>
+                                </div>
+                                <h4 class="font-extrabold text-textDark text-xl sm:text-2xl group-hover:text-brandTeal transition-colors">行政助理</h4>
+                                <div class="text-sm sm:text-base font-bold text-textMuted">台固保全股份有限公司 (樓管事業部) · 桃園市桃園區</div>
+                                <p class="text-sm sm:text-base text-textMuted pt-1 leading-relaxed">負責行政事務處理、文件檔案結構化管理與跨部門溝通協調。</p>
+                            </div>
+                            <div class="shrink-0 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-brandTeal group-hover:bg-brandTeal group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 經歷 02 -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-bgWarm hover:bg-white hover:shadow-md transition-all border border-gray-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="text-sm font-bold bg-white text-textDark border border-gray-200 px-3.5 py-1 rounded-full">2024/09 - 2025/02</span>
+                                    <span class="text-sm font-bold text-gray-500">門市服務</span>
+                                </div>
+                                <h4 class="font-extrabold text-textDark text-xl sm:text-2xl group-hover:text-brandTeal transition-colors">收銀人員 / 售票人員</h4>
+                                <div class="text-sm sm:text-base font-bold text-textMuted">蝦皮店到店</div>
+                                <p class="text-sm sm:text-base text-textMuted pt-1 leading-relaxed">負責現場門市顧客服務、POS 收銀結帳、包裹進出貨快速盤點。</p>
+                            </div>
+                            <div class="shrink-0 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-brandTeal group-hover:bg-brandTeal group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 經歷 03 -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-bgWarm hover:bg-white hover:shadow-md transition-all border border-gray-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="text-sm font-bold bg-white text-textDark border border-gray-200 px-3.5 py-1 rounded-full">2008/09 - 2016/09 (8年1個月)</span>
+                                    <span class="text-sm font-bold text-brandTeal">圖書館資訊</span>
+                                </div>
+                                <h4 class="font-extrabold text-textDark text-xl sm:text-2xl group-hover:text-brandTeal transition-colors">圖書館員</h4>
+                                <div class="text-sm sm:text-base font-bold text-textMuted">蘆竹圖書館 (公家機關) · 桃園市蘆竹區</div>
+                                <p class="text-sm sm:text-base text-textMuted pt-1 leading-relaxed">負責館藏目錄編目、館際合作、讀者資訊檢索服務與圖書自動化系統維護，養成本身高度嚴謹的資訊分類邏輯。</p>
+                            </div>
+                            <div class="shrink-0 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-brandTeal group-hover:bg-brandTeal group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 經歷 04 -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-bgWarm hover:bg-white hover:shadow-md transition-all border border-gray-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="text-sm font-bold bg-white text-textDark border border-gray-200 px-3.5 py-1 rounded-full">2004/06 - 2006/10</span>
+                                    <span class="text-sm font-bold text-gray-500">生產製造</span>
+                                </div>
+                                <h4 class="font-extrabold text-textDark text-xl sm:text-2xl group-hover:text-brandTeal transition-colors">作業員 / 包裝員</h4>
+                                <div class="text-sm sm:text-base font-bold text-textMuted">東泰沂 (電腦及其週邊設備製造業) · 桃園市蘆竹區</div>
+                                <p class="text-sm sm:text-base text-textMuted pt-1 leading-relaxed">負責電腦週邊設備組裝、成品包裝與品質檢驗流線作業。</p>
+                            </div>
+                            <div class="shrink-0 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-brandTeal group-hover:bg-brandTeal group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 經歷 05 -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-bgWarm hover:bg-white hover:shadow-md transition-all border border-gray-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="text-sm font-bold bg-white text-textDark border border-gray-200 px-3.5 py-1 rounded-full">2002/06 - 2004/06</span>
+                                    <span class="text-sm font-bold text-brandTeal">財務會計</span>
+                                </div>
+                                <h4 class="font-extrabold text-textDark text-xl sm:text-2xl group-hover:text-brandTeal transition-colors">會計助理</h4>
+                                <div class="text-sm sm:text-base font-bold text-textMuted">紡織業公司 · 桃園市蘆竹區</div>
+                                <p class="text-sm sm:text-base text-textMuted pt-1 leading-relaxed">負責日常傳票整理、基礎帳務編製、財務數據核對與會計行政支援。</p>
+                            </div>
+                            <div class="shrink-0 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-brandTeal group-hover:bg-brandTeal group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 Footer -->
+    <footer class="bg-brandTeal text-white border-t border-brandTealHover py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/10 pb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brandOrange text-white flex items-center justify-center font-bold text-lg shadow-md">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-lg">趙憶慧 個人數位履歷作品集</h3>
+                        <p class="text-xs text-emerald-200">圖書館員 / 會計數據 / AI 應用開發</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <button onclick="copyContactInfo()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2.5 rounded-full transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>聯繫我</span>
+                    </button>
+                    <button onclick="copyContactInfo()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2.5 rounded-full transition-all flex items-center gap-2">
+                        <i class="fa-regular fa-envelope"></i>
+                        <span>chanel07210910@gmail.com</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-200 gap-4">
+                <p>© 2026 Yi-Hui Chao · All Rights Reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#about" class="hover:text-white transition-colors">關於我</a>
+                    <a href="#ai-tools" class="hover:text-white transition-colors">AI作品</a>
+                    <a href="#certificates" class="hover:text-white transition-colors">證書</a>
+                    <a href="#experience" class="hover:text-white transition-colors">經歷</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast 複製訊息通知彈窗 -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-textDark text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all transform translate-y-20 opacity-0 z-50 text-xs sm:text-sm border border-gray-700">
+        <div class="w-6 h-6 rounded-full bg-brandOrange text-white flex items-center justify-center text-xs font-bold shrink-0">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span id="toastMsg">訊息通知</span>
+    </div>
+
+    <!-- 證書檢視 Lightbox Modal -->
+    <div id="certModal" class="fixed inset-0 bg-textDark/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeCertModal()">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl modal-animate relative" onclick="event.stopPropagation()">
+            <!-- 關閉鈕 -->
+            <button onclick="closeCertModal()" class="absolute top-4 right-4 text-gray-400 hover:text-textDark w-9 h-9 rounded-full bg-bgWarm flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold text-brandOrange uppercase tracking-wider">Credential Verification</span>
+                <h3 id="certModalTitle" class="font-extrabold text-xl text-textDark pr-8">證書名稱</h3>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden bg-bgWarmCard aspect-video border border-gray-100 shadow-inner">
+                <img id="certModalImg" src="" alt="證書放大圖" class="w-full h-full object-cover">
+            </div>
+
+            <p id="certModalDesc" class="text-xs sm:text-sm text-textMuted leading-relaxed bg-bgWarm p-4 rounded-2xl border border-gray-200/60">
+                證書詳細說明與簡介...
+            </p>
+
+            <div class="pt-2 flex justify-end">
+                <button onclick="closeCertModal()" class="bg-brandTeal text-white font-bold text-xs px-5 py-2.5 rounded-full hover:bg-brandTealHover transition-colors">
+                    關閉視窗
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 開啟證書 Modal
+        function openCertModal(title, imgUrl, desc) {
+            document.getElementById('certModalTitle').textContent = title;
+            document.getElementById('certModalImg').src = imgUrl;
+            document.getElementById('certModalDesc').textContent = desc;
+            
+            const modal = document.getElementById('certModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // 鎖定背景滾動
+        }
+
+        // 關閉證書 Modal
+        function closeCertModal() {
+            const modal = document.getElementById('certModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // 恢復背景滾動
+        }
+
+        // 複製電話與 Email 聯絡資訊
+        function copyContactInfo() {
+            const contactInfo = '電話：0936620721 | Email：chanel07210910@gmail.com';
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = contactInfo;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast(`已成功複製聯絡資訊！電話：0936620721 | Email：chanel07210910@gmail.com`);
+            } catch (err) {
+                showToast(`複製失敗，請手動聯絡電話：0936620721`);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // 顯示 Toast 提示視窗
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // 按下 ESC 鍵時自動關閉 Modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCertModal();
+            }
+        });
+    </script>
+</body>
+</html>
